@@ -1,4 +1,5 @@
 # AI Model Hub
+## MultiModal
 
 ## Overview
 AI Model Hub is a comprehensive platform that combines two powerful AI applications:

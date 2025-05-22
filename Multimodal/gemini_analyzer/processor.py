@@ -1,4 +1,3 @@
-import google.generativeai as genai
 import yt_dlp
 import requests
 import tempfile
@@ -6,8 +5,67 @@ import mimetypes
 import os
 import time
 from urllib.parse import urlparse
+from config import Config
+import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyDIDjSb2WZRAXmS5p6SfaM5HD49NOsO_NE")
+def analyze_media(file_path: str, prompt: str) -> str:
+    """Core analysis function with improved MIME detection"""
+    try:
+        # Get MIME type with multiple fallbacks
+        mime_type = (
+            mimetypes.guess_type(file_path)[0] or 
+            'image/jpeg' if file_path.lower().endswith(('.jpg', '.jpeg')) else
+            'image/png' if file_path.lower().endswith('.png') else
+            'video/mp4'
+        )
+        
+        # Check file size
+        file_size = os.path.getsize(file_path)
+        if file_size > Config.MAX_CONTENT_LENGTH:
+            raise Exception("File too large. Maximum size is 16MB")
+            
+        with open(file_path, 'rb') as f:
+            media_data = f.read()
+
+        # Using the latest Gemini model
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        # Prepare the media content
+        media_part = {
+            "mime_type": mime_type,
+            "data": media_data
+        }
+        
+        # Prepare the text prompt
+        text_part = {
+            "text": prompt
+        }
+        
+        # Generate content
+        response = model.generate_content(
+            contents=[media_part, text_part],
+            generation_config={
+                "temperature": 0.4,
+                "top_p": 0.8,
+                "top_k": 32,
+                "max_output_tokens": 2048,
+            }
+        )
+        
+        if not response.text:
+            raise Exception("No response generated from the model")
+            
+        return response.text
+    except Exception as e:
+        error_msg = str(e)
+        if "quota" in error_msg.lower() or "429" in error_msg:
+            raise Exception("Rate limit exceeded. Please wait before trying again.")
+        elif "invalid" in error_msg.lower():
+            raise Exception("Invalid file format or corrupted file")
+        elif "size" in error_msg.lower():
+            raise Exception("File size too large. Maximum size is 16MB")
+        else:
+            raise Exception(f"Analysis Error: {error_msg}")
 
 def process_input(source: str, prompt: str, max_retries=3) -> str:
     """Universal processor for all input types including YouTube"""
@@ -29,6 +87,7 @@ def process_input(source: str, prompt: str, max_retries=3) -> str:
             return f"Error: {str(e)}"
     return "Error: Maximum retries exceeded"
 
+# Helper functions
 def is_youtube_url(url: str) -> bool:
     """Check if URL is from YouTube"""
     return any(domain in url for domain in ['youtube.com', 'youtu.be'])
@@ -39,39 +98,34 @@ def is_direct_url(url: str) -> bool:
 
 def process_youtube(url: str, prompt: str) -> str:
     """Handle YouTube URLs with yt-dlp"""
-    temp_dir = tempfile.mkdtemp()
     temp_path = None
+    temp_dir = tempfile.mkdtemp()
+    ydl_opts = {
+        'quiet': True,
+        'noplaylist': True,
+        'no_warnings': True,
+        'extract_flat': False,
+        'merge_output_format': 'mp4'
+    }
+
     try:
         # Convert shorts URL to regular YouTube URL if needed
         if '/shorts/' in url:
             video_id = url.split('/shorts/')[1].split('?')[0]
             url = f'https://www.youtube.com/watch?v={video_id}'
 
-        ydl_opts = {
-            'outtmpl': os.path.join(temp_dir, 'video.%(ext)s'),
-            'format': 'best[ext=mp4]/best',  # Simplified format selection
-            'quiet': True,
-            'noplaylist': True,
-            'no_warnings': True,
-            'extract_flat': False,
-            'merge_output_format': 'mp4'
-        }
-
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            try:
-                info = ydl.extract_info(url, download=True)
-                temp_path = ydl.prepare_filename(info)
+            info = ydl.extract_info(url, download=True)
+            temp_path = ydl.prepare_filename(info)
+            
+            if not os.path.exists(temp_path):
+                raise Exception("Failed to download video")
                 
-                if not os.path.exists(temp_path):
-                    raise Exception("Failed to download video")
-                    
-                return analyze_media(temp_path, prompt)
-            except Exception as e:
-                if "ffmpeg" in str(e).lower():
-                    raise Exception("FFmpeg is required for video processing. Please install FFmpeg on your system.")
-                raise e
+            return analyze_media(temp_path, prompt)
     except Exception as e:
-        return f"YouTube Error: {str(e)}"
+        if "ffmpeg" in str(e).lower():
+            raise Exception("FFmpeg is required for video processing. Please install FFmpeg on your system.")
+        raise Exception(f"YouTube Error: {str(e)}")
     finally:
         if temp_path and os.path.exists(temp_path):
             try:
@@ -91,10 +145,15 @@ def process_direct_url(url: str, prompt: str) -> str:
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
     try:
-        # Get MIME type from headers first
+        # Get MIME type and size from headers first
         response = requests.head(url, allow_redirects=True, headers=headers)
         content_type = response.headers.get('Content-Type', '').split(';')[0].strip()
+        content_length = int(response.headers.get('Content-Length', 0))
         
+        # Check file size
+        if content_length > Config.MAX_CONTENT_LENGTH:
+            return "File too large. Maximum size is 16MB"
+            
         # Create temp file with proper extension
         ext = mimetypes.guess_extension(content_type) or '.tmp'
         with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as f:
@@ -119,42 +178,6 @@ def process_local_file(file_path: str, prompt: str) -> str:
         return "Error: File not found"
     
     return analyze_media(file_path, prompt)
-
-def analyze_media(file_path: str, prompt: str) -> str:
-    """Core analysis function with improved MIME detection"""
-    try:
-        # Get MIME type with multiple fallbacks
-        mime_type = (
-            mimetypes.guess_type(file_path)[0] or 
-            'image/jpeg' if file_path.lower().endswith(('.jpg', '.jpeg')) else
-            'image/png' if file_path.lower().endswith('.png') else
-            'video/mp4'
-        )
-        
-        with open(file_path, 'rb') as f:
-            media_data = f.read()
-
-        # Using the latest free tier model
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
-        response = model.generate_content(
-            [
-                {'mime_type': mime_type, 'data': media_data},
-                {'text': prompt}
-            ],
-            generation_config={
-                "temperature": 0.4,  # Lower temperature for more focused responses
-                "top_p": 0.8,
-                "top_k": 32,
-                "max_output_tokens": 2048,
-            }
-        )
-        
-        return response.text
-    except Exception as e:
-        if "quota" in str(e).lower() or "429" in str(e):
-            raise Exception("Rate limit exceeded. Please wait before trying again.")
-        return f"Analysis Error: {str(e)}"
 
 # Test with an image
 if __name__ == "__main__":

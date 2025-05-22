@@ -32,6 +32,20 @@
             backdrop-filter: blur(10px);
             border-radius: 0.5rem;
         }
+        .preview-image-container {
+            width: 100%;
+            max-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            margin: auto;
+        }
         .preview-container img, 
         .preview-container video,
         .preview-container iframe {
@@ -96,9 +110,8 @@
                     </span>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="/sign" class="text-gray-600 hover:text-blue-600 transition-colors">Sign Language</a>
-                    <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">About</a>
-                    <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors">Documentation</a>
+                    <a href="/about" class="text-gray-600 hover:text-blue-600 transition-colors">About</a>
+                    <a href="/docs" class="text-gray-600 hover:text-blue-600 transition-colors">Documentation</a>
                 </div>
             </div>
         </div>
@@ -153,7 +166,17 @@
     </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Get API endpoints
+        const config = {
+            apiUrl: window.location.origin,
+            apiEndpoints: {
+                analyze: '/api/analyze'
+            },
+            apiKey: 'AIzaSyAhYUcUSjgW8_qHTg6a_uXqezq1JJ9JCiM'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const API_BASE_URL = config.apiUrl;
             const dropZone = document.getElementById('dropZone');
             const fileInput = document.getElementById('fileInput');
             const youtubeUrl = document.getElementById('youtubeUrl');
@@ -248,6 +271,15 @@
                     return;
                 }
 
+                // Image URL handling
+                if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                    previewContainer.innerHTML = `
+                        <div class="preview-image-container">
+                            <img src="${url}" class="preview-image" alt="Preview">
+                        </div>`;
+                    return;
+                }
+
                 previewContainer.innerHTML = '<p class="text-yellow-600">URL detected but not a video. Analysis will still proceed.</p>';
             });
 
@@ -270,22 +302,31 @@
                     if (fileInput.files.length > 0) {
                         // Handle file upload
                         formData.append('file', fileInput.files[0]);
+                        formData.append('prompt', analysisPrompt);
+                        formData.append('source_type', 'file');
                         
-                        response = await fetch('http://localhost:8000/api/upload', {
+                        response = await fetch(`${config.apiUrl}${config.apiEndpoints.analyze}`, {
                             method: 'POST',
+                            headers: {
+                                'X-API-Key': config.apiKey
+                            },
+                            credentials: 'include',
                             body: formData
                         });
                     } else if (youtubeUrl.value.trim()) {
                         // Handle YouTube URL
-                        response = await fetch('http://localhost:8000/api/analyze', {
+                        const youtubeFormData = new FormData();
+                        youtubeFormData.append('source_type', 'url');
+                        youtubeFormData.append('url', youtubeUrl.value.trim());
+                        youtubeFormData.append('prompt', analysisPrompt);
+                        
+                        response = await fetch(`${config.apiUrl}${config.apiEndpoints.analyze}`, {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json'
+                                'X-API-Key': config.apiKey
                             },
-                            body: JSON.stringify({
-                                source: youtubeUrl.value.trim(),
-                                prompt: analysisPrompt
-                            })
+                            credentials: 'include',
+                            body: youtubeFormData
                         });
                     } else {
                         alert('Please provide either a file or URL');
@@ -311,7 +352,7 @@
                     console.error('Analysis error:', error);
                     result.innerHTML = `<div class="bg-red-50 p-4 rounded-lg">
                         <p class="text-red-600">Error: ${error.message}</p>
-                        <p class="text-sm text-red-500 mt-2">Please make sure the FastAPI server is running at http://localhost:8000</p>
+                        <p class="text-sm text-red-500 mt-2">Please make sure the server is running at http://localhost:5000</p>
                     </div>`;
                 } finally {
                     // Reset button state

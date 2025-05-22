@@ -200,9 +200,9 @@
             } else if (currentSource === 'youtube') {
                 formData.append('youtube_url', document.getElementById('youtube_url').value);
             } else if (currentSource === 'file') {
-                const fileInput = document.getElementById('file');
-                if (fileInput.files.length > 0) {
-                    formData.append('file', fileInput.files[0]);
+                const file = document.getElementById('file').files[0];
+                if (file) {
+                    formData.append('file', file);
                 }
             }
 

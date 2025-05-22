@@ -1,8 +1,0 @@
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.env
-temp_*
-.DS_Store
-node_modules/

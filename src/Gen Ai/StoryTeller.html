@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📖 Kids' Storyteller</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(135deg, #fceabb, #f8b500);
+      color: #4b2e1e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      color: #ff6347;
+      font-size: 3em;
+      margin-bottom: 10px;
+      animation: popIn 1s ease-out;
+      text-shadow: 2px 2px 5px #fff0dc;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+      color: #5c4033;
+      animation: fadeIn 1.2s ease-out;
+    }
+
+    select, textarea {
+      cursor: default;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    select, button, textarea {
+      width: 100%;
+      max-width: 500px;
+      margin: 15px 0;
+      padding: 14px 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.3s;
+      background-color: #fffef3;
+    }
+
+    select:hover, textarea:hover {
+      transform: scale(1.02);
+    }
+
+    button {
+      background: linear-gradient(to right, #ffa07a, #f08080);
+      color: white;
+      font-weight: bold;
+      font-size: 17px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #ff7f50, #ff6347);
+      transform: scale(1.05);
+    }
+
+    textarea {
+      height: 320px;
+      resize: none;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 15px;
+      background-color: #fffaf0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🌟 Kids' Storyteller</h1>
+  <p>Pick a magical theme and read a fun story!</p>
+
+  <select id="theme">
+    <option value="Friendship">Friendship</option>
+    <option value="Facing Fear">Facing Fear</option>
+    <option value="Being Kind">Being Kind</option>
+    <option value="Nature">Nature</option>
+    <option value="Dreams">Dreams</option>
+    <option value="Helping Others">Helping Others</option>
+    <option value="Bravery">Bravery</option>
+    <option value="Sharing">Sharing</option>
+    <option value="Curiosity">Curiosity</option>
+    <option value="Teamwork">Teamwork</option>
+  </select>
+
+  <button onclick="generateStory()">✨ Tell Me a Story</button>
+
+  <textarea id="output" placeholder="Your story will appear here..." readonly></textarea>
+
+  <script>
+    const BACKEND_URL = "https://5656-34-83-68-197.ngrok-free.app/generate";
+    // Replace with your actual public ngrok URL
+
+    async function generateStory() {
+      const theme = document.getElementById("theme").value;
+      const output = document.getElementById("output");
+      output.value = "✨ Weaving a tale... Please wait 🧵📚";
+
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ theme })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          output.value = data.story;
+        } else {
+          output.value = "❌ Failed to fetch story. Please check the backend.";
+        }
+      } catch (error) {
+        output.value = "🚫 Error connecting to backend. Is it running?";
+      }
+    }
+  </script>
+</body>
+</html>

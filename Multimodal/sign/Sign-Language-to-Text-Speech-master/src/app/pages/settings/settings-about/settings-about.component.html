@@ -1,0 +1,176 @@
+<ng-container *transloco="let t; read: 'settings.support.about'">
+  <ion-header [translucent]="true">
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-back-button [text]="'settings.title' | transloco"></ion-back-button>
+      </ion-buttons>
+      <ion-title>
+        <ion-icon name="information-circle-outline" style="vertical-align: middle; margin-right: 8px;"></ion-icon>
+        About This Project
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content [fullscreen]="true" class="about-content">
+    <div class="about-container">
+      <!-- Logo (optional) -->
+      <!-- <img src="assets/logo.png" alt="Project Logo" class="about-logo" /> -->
+
+      <h2>Sign Language Text-to-Sign Translator</h2>
+      <p>
+        <strong>Sign Translate</strong> is an open-source web application designed to bridge the communication gap between spoken/written languages and sign languages. It empowers users to input text in a supported spoken language and receive a visual translation in sign language, using animated avatars and SignWriting representations.
+      </p>
+
+      <ion-card>
+        <ion-card-header color="secondary">
+          <ion-card-title>
+            <ion-icon name="star-outline" style="vertical-align: middle; margin-right: 6px;"></ion-icon>
+            Key Features
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ul>
+            <li><strong>Text-to-sign translation</strong> for multiple spoken and sign languages</li>
+            <li><strong>Animated sign language output</strong> using avatars and pose viewers</li>
+            <li><strong>SignWriting visualization</strong> for accurate sign representation</li>
+            <li><strong>Modern, accessible, and responsive UI</strong> for all devices</li>
+            <li><strong>Open-source</strong> and community-driven development</li>
+          </ul>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="bulb-outline" style="vertical-align: middle; margin-right: 6px;"></ion-icon>
+            Purpose
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>
+            The main goal of this project is to make sign language more accessible, support inclusive communication, and provide a valuable tool for education, accessibility, and research. We believe in breaking down barriers and enabling everyone to communicate freely.
+          </p>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="help-circle-outline" style="vertical-align: middle; margin-right: 6px;"></ion-icon>
+            How It Works
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ol>
+            <li>Enter text in your chosen spoken language.</li>
+            <li>Select the target sign language.</li>
+            <li>View the animated sign language translation and SignWriting output.</li>
+          </ol>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="people-outline" style="vertical-align: middle; margin-right: 6px;"></ion-icon>
+            Who Can Use This?
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ul>
+            <li>Deaf and hard-of-hearing individuals</li>
+            <li>Sign language learners and educators</li>
+            <li>Researchers and accessibility advocates</li>
+            <li>Anyone interested in inclusive communication</li>
+          </ul>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="bug-outline" style="vertical-align: middle; margin-right: 6px;"></ion-icon>
+            Report Issues & Feedback
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>
+            Found a bug, have a suggestion, or want to request a new feature? Please <a href="https://github.com/sign/translate/issues" target="_blank">open an issue on our GitHub Issues page</a>. Your feedback helps us improve the project for everyone!
+          </p>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="git-branch-outline" style="vertical-align: middle; margin-right: 6px;"></ion-icon>
+            Contributing
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>
+            Contributions are welcome! Visit the <a href="https://github.com/your-repo-link" target="_blank">project's repository</a> for more information on how to get involved, report issues, or suggest features.
+          </p>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="document-outline" style="vertical-align: middle; margin-right: 6px;"></ion-icon>
+            License
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>
+            This project is licensed under the MIT License.
+          </p>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ion-content>
+
+  <style>
+  .about-content {
+    --background: linear-gradient(135deg, #000000 0%, #0d2e52 100%);
+    min-height: 100vh;
+  }
+  .about-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 24px 12px 48px 12px;
+    animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: none; }
+  }
+  .about-logo {
+    display: block;
+    margin: 0 auto 24px auto;
+    max-width: 120px;
+  }
+  h2 {
+    font-size: 2.2em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+  ion-card-title {
+    font-size: 1.3em;
+    font-weight: 600;
+  }
+  ion-card-content, .about-container p, .about-container ul, .about-container ol {
+    font-size: 1.15em;
+  }
+  ion-card {
+    margin-top: 18px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 12px 0 rgba(60, 60, 120, 0.07);
+  }
+  ion-card:hover {
+    transform: translateY(-6px) scale(1.025);
+    box-shadow: 0 8px 24px 0 rgba(60, 60, 120, 0.13);
+    z-index: 2;
+  }
+  </style>
+</ng-container>

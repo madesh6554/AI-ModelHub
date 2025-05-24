@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Translator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .video-container {
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+        }
+        .video-feed {
+            max-width: 100%;
+            border: 2px solid #333;
+            border-radius: 8px;
+        }
+        .error-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .translation {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-width: 300px;
+            text-align: center;
+        }
+        .text-input {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+        .loading {
+            display: none;
+            margin: 10px 0;
+        }
+        .loading::after {
+            content: "Loading...";
+            animation: dots 1.5s infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: "Loading."; }
+            40% { content: "Loading.."; }
+            60%, 100% { content: "Loading..."; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sign Language Translator</h1>
+        
+        <div class="error-message" id="error-message"></div>
+        
+        <div class="video-container">
+            <img src="{{ url_for('video_feed') }}" class="video-feed" alt="Video Feed" onerror="handleVideoError()">
+        </div>
+        
+        <div class="controls">
+            <button onclick="startCamera()" id="startButton">Start Camera</button>
+            <button onclick="stopCamera()" id="stopButton" disabled>Stop Camera</button>
+        </div>
+        
+        <div class="translation">
+            <h2>Translation</h2>
+            <p id="translation-text">No translation yet</p>
+            <div class="loading" id="loading"></div>
+        </div>
+        
+        <div class="text-input">
+            <input type="text" id="text-input" placeholder="Enter text to convert to sign language">
+            <button onclick="convertToSign()" id="convertButton">Convert to Sign</button>
+        </div>
+    </div>
+
+    <script>
+        let isCameraRunning = false;
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function handleVideoError() {
+            showError('Error accessing camera. Please make sure you have granted camera permissions.');
+            document.getElementById('startButton').disabled = true;
+            document.getElementById('stopButton').disabled = true;
+        }
+
+        function startCamera() {
+            const startButton = document.getElementById('startButton');
+            const stopButton = document.getElementById('stopButton');
+            
+            startButton.disabled = true;
+            stopButton.disabled = false;
+            isCameraRunning = true;
+            
+            // Reload the video feed
+            const videoFeed = document.querySelector('.video-feed');
+            videoFeed.src = "{{ url_for('video_feed') }}?" + new Date().getTime();
+        }
+
+        function stopCamera() {
+            const startButton = document.getElementById('startButton');
+            const stopButton = document.getElementById('stopButton');
+            
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            isCameraRunning = false;
+            
+            // Reload the page to stop the camera
+            location.reload();
+        }
+
+        function convertToSign() {
+            const text = document.getElementById('text-input').value;
+            if (!text) {
+                showError('Please enter some text to convert');
+                return;
+            }
+
+            const convertButton = document.getElementById('convertButton');
+            const loading = document.getElementById('loading');
+            
+            convertButton.disabled = true;
+            loading.style.display = 'block';
+
+            fetch('/text_to_sign', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: text }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    document.getElementById('translation-text').textContent = 
+                        `Converting "${text}" to sign language...`;
+                }
+            })
+            .catch(error => {
+                showError('Error converting text to sign language');
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                convertButton.disabled = false;
+                loading.style.display = 'none';
+            });
+        }
+
+        // Check if camera is available when page loads
+        window.onload = function() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showError('Your browser does not support camera access');
+                document.getElementById('startButton').disabled = true;
+            }
+        };
+    </script>
+</body>
+</html> 

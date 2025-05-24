@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <app-logo></app-logo>
+    </ion-buttons>
+    <ion-title>{{ 'translate.title' | transloco }}</ion-title>
+    <ion-buttons slot="end">
+      <app-send-feedback></app-send-feedback>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="container">
+    <app-language-selectors></app-language-selectors>
+    
+    <div class="translation-container">
+      <app-spoken-to-signed></app-spoken-to-signed>
+    </div>
+  </div>
+</ion-content>

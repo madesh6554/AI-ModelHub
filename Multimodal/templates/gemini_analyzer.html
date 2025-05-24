@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Analyzer - AI Model Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-light: #60a5fa;
+            --primary-dark: #1d4ed8;
+            --bg-gradient: linear-gradient(135deg, #e3ecfa 0%, #f7fafd 100%);
+            --card-shadow: 0 6px 32px rgba(37,99,235,0.08), 0 1.5px 6px rgba(0,0,0,0.03);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+            font-size: 1.3rem;
+            transition: transform 0.2s;
+        }
+
+        .navbar-brand:hover {
+            transform: translateX(-5px);
+        }
+
+        .nav-link {
+            color: #222 !important;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 80%;
+        }
+
+        .main-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 2.5rem;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .subtitle {
+            color: #475569;
+            margin-bottom: 2.5rem;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            padding: 2.2rem 2rem 2rem 2rem;
+            min-height: 420px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 40px rgba(37,99,235,0.12), 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.2rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 24px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .input-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(37,99,235,0.07);
+            padding: 2.2rem 2rem 2rem 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modern-input {
+            border-radius: 12px;
+            border: 1.5px solid #dbeafe;
+            box-shadow: 0 1px 4px rgba(37,99,235,0.04);
+            font-size: 1.05rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .modern-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+        }
+
+        .upload-box {
+            border: 2.5px dashed var(--primary-color);
+            border-radius: 16px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            background: #f1f5fa;
+            cursor: pointer;
+            margin-bottom: 1.2rem;
+            transition: all 0.3s;
+            position: relative;
+            box-shadow: 0 1px 6px rgba(37,99,235,0.04);
+        }
+
+        .upload-box:hover {
+            background: #e0e7ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-box.dragover {
+            background: #e0e7ff;
+            border-color: var(--primary-dark);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .upload-box:hover .upload-icon {
+            transform: translateY(-5px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            border: none;
+            font-weight: 700;
+            font-size: 1.13rem;
+            padding: 1rem 0;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.15);
+            transition: all 0.3s;
+            position: relative;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:active, .btn-primary:focus {
+            background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            box-shadow: 0 6px 20px rgba(37,99,235,0.2);
+            transform: translateY(1px);
+        }
+
+        .preview-area {
+            min-height: 260px;
+            max-height: 340px;
+            background: #f8fafc;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            margin-bottom: 1.2rem;
+            font-size: 1.13rem;
+            overflow: auto;
+            box-shadow: 0 1px 6px rgba(37,99,235,0.04);
+            transition: all 0.3s;
+        }
+
+        .preview-area:hover {
+            box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+        }
+
+        .result-area {
+            min-height: 120px;
+            background: linear-gradient(135deg, #f3f4f6 60%, #e0e7ff 100%);
+            border-radius: 20px;
+            padding: 1.8rem 1.6rem;
+            color: #22223b;
+            font-size: 1.18rem;
+            word-break: break-word;
+            box-shadow: 0 8px 32px rgba(37,99,235,0.10), 0 1.5px 6px rgba(0,0,0,0.03);
+            border: 1.5px solid #e0e7ff;
+            transition: all 0.3s;
+            line-height: 1.7;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .wave-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(37, 99, 235, 0.1) 25%,
+                rgba(96, 165, 250, 0.2) 50%,
+                rgba(37, 99, 235, 0.1) 75%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: waveMove 2s infinite linear;
+            border-radius: 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes waveMove {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .analyzing-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .analyzing-dots {
+            display: inline-block;
+            width: 24px;
+            text-align: left;
+        }
+
+        .analyzing-dots::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+
+        .result-area.analyzing {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-area.analyzing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(37, 99, 235, 0.1) 25%,
+                rgba(96, 165, 250, 0.2) 50%,
+                rgba(37, 99, 235, 0.1) 75%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: waveMove 2s infinite linear;
+            border-radius: 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .analyzing-text {
+            position: relative;
+            z-index: 1;
+            color: #2563eb;
+            font-weight: 600;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-wave {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: wave 1.5s infinite;
+            border-radius: 20px;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes fadeInResult {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-area.loading {
+            animation: none;
+        }
+
+        .result-area.loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: wave 1.5s infinite;
+            border-radius: 20px;
+        }
+
+        @media (min-width: 992px) {
+            .row.justify-content-center > div {
+                max-width: 520px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .main-title {
+                font-size: 2.2rem;
+            }
+            .card {
+                padding: 1.5rem 1rem 1.5rem 1rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5fa;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+        <a class="navbar-brand" href="/">&lt; Back to Models</a>
+        <span class="navbar-brand ms-3">Gemini Analyzer</span>
+        <div class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/about/gemini">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="/docs/gemini">Documentation</a></li>
+            </ul>
+            </div>
+        </div>
+    </nav>
+        <div class="container">
+    <div class="text-center">
+        <div class="main-title">AI-Powered Media Analysis</div>
+        <div class="subtitle">Analyze images, videos, and YouTube content with Gemini AI</div>
+                    </div>
+    <div class="row justify-content-center g-4">
+        <div class="col-lg-5 mb-4">
+            <div class="input-card">
+                <div class="section-title">Upload Media</div>
+                <div id="uploadBox" class="upload-box">
+                    <div class="upload-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
+                          <path fill-rule="evenodd" d="M8 0a5.53 5.53 0 0 0-5.473 4.684A4.002 4.002 0 0 0 4 15h8a4 4 0 0 0 .473-7.942A5.53 5.53 0 0 0 8 0Zm.5 7.5V11a.5.5 0 0 1-1 0V7.5H5.354a.5.5 0 0 1-.353-.854l2.646-2.647a.5.5 0 0 1 .707 0l2.646 2.647a.5.5 0 0 1-.353.854H8.5Z"/>
+                        </svg>
+                    </div>
+                    <span style="font-size:1.09rem;">Drag and drop your media here or click to browse</span>
+                    <input type="file" id="mediaInput" accept="image/*,video/*" style="display:none;">
+                </div>
+                <label for="youtubeUrl" class="form-label" style="font-weight:500;">Or enter YouTube URL:</label>
+                <input type="text" id="youtubeUrl" class="modern-input w-100" placeholder="https://www.youtube.com/watch?v=...">
+                <label for="prompt" class="form-label" style="font-weight:500;">Analysis Prompt:</label>
+                <textarea id="prompt" class="modern-input w-100" rows="2" placeholder="Describe what you want to analyze..."></textarea>
+                <button class="btn btn-primary w-100" id="analyzeBtn">
+                    <span id="analyzeSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                      <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-9.193 9.193a.5.5 0 0 1-.168.11l-4 1.5a.5.5 0 0 1-.65-.65l1.5-4a.5.5 0 0 1 .11-.168l9.193-9.193ZM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5Zm1.586 3L10.5 3.207 3 10.707V13h2.293l7.5-7.5Z"/>
+                    </svg>
+                    <span>Analyze Media</span>
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-5 mb-4">
+            <div class="input-card">
+                <div class="section-title">Preview</div>
+                <div class="preview-area mb-3" id="previewArea">Preview will appear here</div>
+                <div class="section-title" style="margin-top:1.5rem;">Analysis Result</div>
+                <div class="result-area" id="resultArea">Results will appear here</div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+    const uploadBox = document.getElementById('uploadBox');
+    const mediaInput = document.getElementById('mediaInput');
+    const previewArea = document.getElementById('previewArea');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const resultArea = document.getElementById('resultArea');
+    const youtubeUrl = document.getElementById('youtubeUrl');
+    const prompt = document.getElementById('prompt');
+    const analyzeSpinner = document.getElementById('analyzeSpinner');
+    let selectedFile = null;
+
+    // Helper: extract YouTube video ID
+    function getYouTubeId(url) {
+        const regExp = /^.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[1].length === 11) ? match[1] : null;
+    }
+
+    // Helper: check if URL is a direct image
+    function isImageUrl(url) {
+        return /\.(jpeg|jpg|png|gif|webp|bmp|svg)$/i.test(url);
+    }
+
+    uploadBox.addEventListener('click', () => mediaInput.click());
+    uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        uploadBox.classList.add('dragover');
+        });
+    uploadBox.addEventListener('dragleave', () => uploadBox.classList.remove('dragover'));
+    uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+        uploadBox.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+            selectedFile = e.dataTransfer.files[0];
+            showPreview(selectedFile);
+        }
+        });
+    mediaInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            selectedFile = e.target.files[0];
+            showPreview(selectedFile);
+        }
+    });
+
+    function showPreview(file) {
+        previewArea.innerHTML = '';
+        if (file && file.type) {
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '320px';
+                img.style.objectFit = 'contain';
+                img.style.borderRadius = '10px';
+                previewArea.appendChild(img);
+                return;
+            } else if (file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.controls = true;
+                video.style.maxWidth = '100%';
+                video.style.maxHeight = '320px';
+                video.style.objectFit = 'contain';
+                video.style.borderRadius = '10px';
+                previewArea.appendChild(video);
+                return;
+            }
+        }
+        // If no file, check for YouTube URL or image URL
+        const url = youtubeUrl.value.trim();
+        const ytId = getYouTubeId(url);
+        if (ytId) {
+            previewArea.innerHTML = `<iframe width="100%" height="320" style="border-radius:10px;border:none;" src="https://www.youtube.com/embed/${ytId}" allowfullscreen></iframe>`;
+        } else if (isImageUrl(url)) {
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '320px';
+            img.style.objectFit = 'contain';
+            img.style.borderRadius = '10px';
+            previewArea.appendChild(img);
+        } else {
+            previewArea.textContent = 'Preview will appear here';
+        }
+    }
+
+    // Listen for YouTube URL changes
+    youtubeUrl.addEventListener('input', () => {
+        if (!selectedFile) showPreview(null);
+    });
+
+    analyzeBtn.addEventListener('click', async () => {
+        resultArea.textContent = 'Analyzing...';
+        analyzeSpinner.classList.remove('d-none');
+        analyzeBtn.setAttribute('disabled', 'disabled');
+        let formData = new FormData();
+        if (selectedFile) {
+            formData.append('file', selectedFile);
+        }
+        if (youtubeUrl.value) {
+            formData.append('youtube_url', youtubeUrl.value);
+        }
+        if (prompt.value) {
+            formData.append('prompt', prompt.value);
+        }
+        try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonErr) {
+                data = null;
+            }
+            if (data && data.result) {
+                // Enhance: bold lines with **, bullets with *
+                let formatted = data.result
+                    .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>') // bold
+                    .replace(/^\s*\* (.+)$/gm, '<span style="color:#2563eb;font-weight:600;">•</span> $1'); // bullets
+                resultArea.innerHTML = `<div class="result-area" style="white-space:pre-line;">${formatted}</div>`;
+            } else if (data && data.detail) {
+                resultArea.innerHTML = `<span style='color:#dc2626;'>${data.detail}</span>`;
+            } else {
+                resultArea.innerHTML = `<pre style=\"margin:0;font-size:1.08rem;line-height:1.5;max-height:220px;overflow:auto;background:#f3f4f6;border-radius:8px;padding:0.7rem;\">${JSON.stringify(data, null, 2)}</pre>`;
+            }
+        } catch (err) {
+            resultArea.innerHTML = `<span style='color:#dc2626;'>Error: ${err.message}</span>`;
+        } finally {
+            analyzeSpinner.classList.add('d-none');
+            analyzeBtn.removeAttribute('disabled');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('geminiForm');
+        const resultArea = document.getElementById('result');
+        const previewArea = document.getElementById('preview');
+        const fileInput = document.getElementById('file');
+        const uploadBox = document.querySelector('.upload-box');
+        const uploadIcon = document.querySelector('.upload-icon');
+        const uploadText = document.querySelector('.upload-box p');
+        const uploadSubtext = document.querySelector('.upload-box small');
+        const submitButton = document.querySelector('button[type="submit"]');
+
+        // Add loading animation to submit button
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Analyzing...';
+            
+            // Add analyzing animation to result area
+            resultArea.classList.add('analyzing');
+            resultArea.innerHTML = `
+                <div class="wave-animation"></div>
+                <div class="analyzing-content">
+                    Analyzing your content<span class="analyzing-dots"></span>
+                </div>
+            `;
+
+            // Submit form
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove loading state
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Analyze with Gemini';
+                resultArea.classList.remove('analyzing');
+                
+                if (data.error) {
+                    resultArea.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                } else {
+                    resultArea.innerHTML = data.result;
+                    resultArea.style.animation = 'fadeInResult 0.7s';
+                }
+            })
+            .catch(error => {
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Analyze with Gemini';
+                resultArea.classList.remove('analyzing');
+                resultArea.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            });
+        });
+
+        // Enhanced drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadBox.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadBox.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadBox.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            uploadBox.classList.add('dragover');
+            uploadIcon.style.transform = 'scale(1.1)';
+        }
+
+        function unhighlight(e) {
+            uploadBox.classList.remove('dragover');
+            uploadIcon.style.transform = 'scale(1)';
+        }
+
+        uploadBox.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            handleFiles(files);
+        }
+
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewArea.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded" alt="Preview">`;
+                        uploadText.textContent = file.name;
+                        uploadSubtext.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    previewArea.innerHTML = `<div class="alert alert-warning">Please select an image file</div>`;
+                    fileInput.value = '';
+                }
+            }
+        }
+
+        // Add smooth scroll to result
+        function scrollToResult() {
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                form.dispatchEvent(new Event('submit'));
+            }
+        });
+    });
+    </script>
+</body>
+</html> 

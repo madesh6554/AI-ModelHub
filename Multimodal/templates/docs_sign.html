@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Translator Documentation - AI Model Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #7C3AED;
+            --secondary-color: #4C1D95;
+        }
+        
+        .navbar {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-link {
+            color: white !important;
+            margin: 0 1rem;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+
+        .docs-section {
+            padding: 4rem 0;
+            min-height: calc(100vh - 76px);
+            background-color: #f8f9fa;
+        }
+
+        .doc-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background-color: white;
+            margin-bottom: 2rem;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .doc-body {
+            padding: 2rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .back-home {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .code-block {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 1rem 0;
+        }
+
+        .gesture-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .gesture-table th,
+        .gesture-table td {
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .gesture-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-brain me-2"></i>AI Model Hub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a href="/docs" class="nav-link">Documentation</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="docs-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="doc-card">
+                        <div class="doc-header">
+                            <h1 class="display-5 mb-3">Sign Language Translator Documentation</h1>
+                            <p class="lead mb-0">Learn how to use the Sign Language Translator effectively</p>
+                        </div>
+                        <div class="doc-body">
+                            <h2 class="mb-4">Overview</h2>
+                            <p>
+                                The Sign Language Translator is an AI-powered tool that uses computer vision to detect and translate sign language gestures in real-time. 
+                                It provides instant translation of hand gestures into text, making communication more accessible.
+                            </p>
+
+                            <h2 class="mb-4 mt-5">Features</h2>
+                            <ul class="feature-list">
+                                <li>Real-time hand gesture detection</li>
+                                <li>Live video translation</li>
+                                <li>Support for common sign language gestures</li>
+                                <li>Video recording and playback</li>
+                                <li>Instant text translation</li>
+                            </ul>
+
+                            <h2 class="mb-4 mt-5">Getting Started</h2>
+                            <p>To use the Sign Language Translator:</p>
+                            <ol>
+                                <li>Navigate to the Sign Language Translator page</li>
+                                <li>Allow camera access when prompted</li>
+                                <li>Position yourself in front of the camera</li>
+                                <li>Make sign language gestures clearly</li>
+                                <li>View the real-time translation below the video</li>
+                            </ol>
+
+                            <h2 class="mb-4 mt-5">Supported Gestures</h2>
+                            <p>The translator currently supports the following basic gestures:</p>
+                            <table class="gesture-table">
+                                <thead>
+                                    <tr>
+                                        <th>Gesture</th>
+                                        <th>Description</th>
+                                        <th>Usage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Hello</td>
+                                        <td>Wave hand side to side</td>
+                                        <td>Greeting</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Thank You</td>
+                                        <td>Flat hand moving from chin outward</td>
+                                        <td>Expression of gratitude</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Yes</td>
+                                        <td>Nodding fist</td>
+                                        <td>Affirmation</td>
+                                    </tr>
+                                    <tr>
+                                        <td>No</td>
+                                        <td>Shaking fist</td>
+                                        <td>Negation</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h2 class="mb-4 mt-5">Best Practices</h2>
+                            <ul class="feature-list">
+                                <li>Ensure good lighting for clear hand detection</li>
+                                <li>Keep hands within the camera frame</li>
+                                <li>Make gestures slowly and clearly</li>
+                                <li>Maintain a neutral background</li>
+                                <li>Use a stable camera position</li>
+                            </ul>
+
+                            <h2 class="mb-4 mt-5">Troubleshooting</h2>
+                            <ul class="feature-list">
+                                <li>If gestures aren't detected, check lighting conditions</li>
+                                <li>Ensure your hands are clearly visible to the camera</li>
+                                <li>Try adjusting your distance from the camera</li>
+                                <li>Check if your browser has camera permissions enabled</li>
+                            </ul>
+
+                            <div class="text-center mt-5">
+                                <a href="/sign" class="btn btn-primary btn-lg">
+                                    Try Sign Language Translator
+                                    <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <a href="/" class="btn btn-primary back-home">
+        <i class="fas fa-home me-2"></i>Back to Home
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

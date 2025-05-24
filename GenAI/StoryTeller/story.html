@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📖 Kids' Storyteller</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #fff8dc; /* light yellow background */
+      color: #5a3e1b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #d2691e;
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    select, button, textarea {
+      width: 100%;
+      max-width: 500px;
+      margin: 12px 0;
+      padding: 12px;
+      border: 2px solid #f4a460;
+      border-radius: 12px;
+      font-size: 16px;
+      background-color: #fffaf0;
+    }
+    button {
+      background-color: #f4a460;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #e9967a;
+    }
+    textarea {
+      height: 300px;
+      resize: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌟 Kids' Storyteller</h1>
+  <p>Pick a magical theme and read a fun story!</p>
+
+  <select id="theme">
+    <option value="Friendship">Friendship</option>
+    <option value="Facing Fear">Facing Fear</option>
+    <option value="Being Kind">Being Kind</option>
+    <option value="Nature">Nature</option>
+    <option value="Dreams">Dreams</option>
+    <option value="Helping Others">Helping Others</option>
+    <option value="Bravery">Bravery</option>
+    <option value="Sharing">Sharing</option>
+    <option value="Curiosity">Curiosity</option>
+    <option value="Teamwork">Teamwork</option>
+  </select>
+
+  <button onclick="generateStory()">✨ Tell Me a Story</button>
+
+  <textarea id="output" placeholder="Your story will appear here..." readonly></textarea>
+
+  <script>
+   const BACKEND_URL = "https://YOUR-NGROK-URL/generate";
+ // Replace with your actual public ngrok URL
+
+    async function generateStory() {
+      const theme = document.getElementById("theme").value;
+      const output = document.getElementById("output");
+      output.value = "✨ Weaving a tale... Please wait 🧵📚";
+
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ theme })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          output.value = data.story;
+        } else {
+          output.value = "❌ Failed to fetch story. Please check the backend.";
+        }
+      } catch (error) {
+        output.value = "🚫 Error connecting to backend. Is it running?";
+      }
+    }
+  </script>
+</body>
+</html>

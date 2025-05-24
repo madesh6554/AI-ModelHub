@@ -6,7 +6,7 @@ const GEMINI_URL = 'https://gemini-analyzer.onrender.com/';
 function ModelModal({ model, onClose }) {
   const handleOpenModel = () => {
     if (model.category.toLowerCase() === 'multimodal') {
-      window.open(GEMINI_URL, '_blank');
+    window.open(GEMINI_URL, '_blank');
     } else if (model.category.toLowerCase() === 'gen ai') {
       window.open(model.url, '_blank');
     }

@@ -4,12 +4,8 @@ import './ModelModal.css';
 const GEMINI_URL = 'https://gemini-analyzer.onrender.com/';
 
 function ModelModal({ model, onClose }) {
-  const handleOpenModel = () => {
-    if (model.category.toLowerCase() === 'multimodal') {
+  const handleOpenGemini = () => {
     window.open(GEMINI_URL, '_blank');
-    } else if (model.category.toLowerCase() === 'gen ai') {
-      window.open(model.url, '_blank');
-    }
     onClose();
   };
 
@@ -18,19 +14,8 @@ function ModelModal({ model, onClose }) {
       return (
         <div className="gemini-section">
           <p>Click to open Gemini Analyzer in a new tab</p>
-          <button className="gemini-button" onClick={handleOpenModel}>
+          <button className="gemini-button" onClick={handleOpenGemini}>
             Open Gemini Analyzer
-          </button>
-        </div>
-      );
-    }
-
-    if (model.category.toLowerCase() === 'gen ai') {
-      return (
-        <div className="gemini-section">
-          <p>Click to open {model.name} in a new tab</p>
-          <button className="gemini-button" onClick={handleOpenModel}>
-            Open {model.name}
           </button>
         </div>
       );
